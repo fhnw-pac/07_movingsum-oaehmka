@@ -67,7 +67,6 @@ __global__ void movingSumSharedMemStatic(int* vec, int* result_vec, int size)
 
     __shared__ int shm_vec[BLOCKSIZE + 2 * RADIUS];
     int innerIdx = threadIdx.x + RADIUS;
-    shm_vec[innerIdx] = vec[globalIdx];
 
     if (globalIdx < size) {
 
@@ -102,7 +101,7 @@ __global__ void movingSumSharedMemStatic(int* vec, int* result_vec, int size)
         result += shm_vec[innerIdx + offset];
     }
     
-    vec[globalIdx] = result;
+    result_vec[globalIdx] = result;
 
 }
 
