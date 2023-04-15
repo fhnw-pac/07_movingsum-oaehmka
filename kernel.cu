@@ -182,6 +182,24 @@ __global__ void movingSumSharedMemDynamic(int* vec, int* result_vec, int size)
 __global__ void movingSumAtomics(int* vec, int* result_vec, int size)
 {
     //ToDo
+    int globalIdx = threadIdx.x + blockIdx.x * blockDim.x;
+    for (int offset = -RADIUS; offset <= RADIUS; offset++) {
+        int localIdx = globalIdx + offset;
+        if (localIdx >= 0 && localIdx < size) {
+            atomicAdd(result_vec + localIdx, vec[globalIdx]);
+        }
+    }
+     
+    
+    //int globalIdx = threadIdx.x + blockIdx.x * blockDim.x;
+    //int result = 0;
+    //for (int offset = -RADIUS; offset <= RADIUS; offset++) {
+    //    int localIdx = globalIdx + offset;
+    //    if (localIdx >= 0 && localIdx < size) {
+    //        result += vec[localIdx];
+    //    }
+    //}
+    //result_vec[globalIdx] = result;
 }
 
 
@@ -305,7 +323,7 @@ int main(void)
     gpuErrCheck(cudaPeekAtLastError());
     movingSumSharedMemDynamic << <nbr_blocks, BLOCKSIZE, (BLOCKSIZE + 2 * RADIUS) * sizeof(int) >> > (deviceVecInput, deviceVecOutput3, WIDTH);
     gpuErrCheck(cudaPeekAtLastError());
-    //ToDo: movingSumAtomics << <nbr_blocks, BLOCKSIZE >> > (deviceVecInput, deviceVecOutput4, WIDTH);
+    movingSumAtomics << <nbr_blocks, BLOCKSIZE >> > (deviceVecInput, deviceVecOutput4, WIDTH);
     gpuErrCheck(cudaPeekAtLastError());
 
     // Copy the result stored in device_y back to host_y
