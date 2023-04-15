@@ -24,6 +24,12 @@
 #include <iostream>
 #include <math.h>
 
+
+// VisualStudio hack
+#ifdef __INTELLISENSE__
+#include "intellisense_cuda_intrinsics.h"
+#endif
+
 using namespace std;
 
 #define RADIUS      10
